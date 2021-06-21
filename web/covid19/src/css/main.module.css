@@ -1,0 +1,16 @@
+p{
+    width: 100%;
+    padding-bottom: 5px;
+    background-color: tomato;
+    text-align: center;
+    font-size: 3ex;
+}
+
+h3{
+    background-color: thistle;
+    text-align: center;
+    font-size: 2ex;
+    padding-bottom: 3px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
