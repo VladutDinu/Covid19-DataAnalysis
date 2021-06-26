@@ -1,15 +1,19 @@
+from logging import debug
 from typing import Optional
 import requests
 from datetime import datetime
-
+import uvicorn
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+from requests.api import request
 
 app = FastAPI()
 origins = ["*"]
+types=['Active', 'Recovered', 'Deaths']
+cases={}
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,35 +22,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-                                                   
-@app.get("/getActiveCases")
-def getActiveCases():
-    data = requests.get('https://api.covid19api.com/country/Romania').json()
-    active_cases=[]
-    for index in range(1, len(data)):
-        active_cases.append({"argument": index, "value": data[index]['Active'] - data[index-1]['Active'] if data[index]['Active'] - data[index-1]['Active'] > 0 and data[index]['Active'] - data[index-1]['Active'] < 10000 else 0})
-    return JSONResponse(status_code=200, content=active_cases)
 
-@app.get("/getRecoveredCases")
-def getRecoveredCases():
+@app.on_event("startup")
+async def startup_event():
     data = requests.get('https://api.covid19api.com/country/Romania').json()
-    active_cases=[]
-    for index in range(1, len(data)):
-        active_cases.append({"argument": index, "value": data[index]['Recovered'] - data[index-1]['Recovered'] if data[index]['Recovered'] - data[index-1]['Recovered'] > 0  and data[index]['Recovered'] - data[index-1]['Recovered'] < 20000 else 0})
-    return JSONResponse(status_code=200, content=active_cases)
+    for type in types:
+        cases.update({type:[]})
+        for index in range(1, len(data)):
+            cases[type].append({"argument": index, "value": data[index][type] - data[index-1][type] if data[index][type] - data[index-1][type] > 0 
+                                and data[index][type] - data[index-1][type] < 20000 else 0})
+    
 
-@app.get("/getDeathCases")
-def getDeathCases():
-    data = requests.get('https://api.covid19api.com/country/Romania').json()
-    active_cases=[]
-    for index in range(1, len(data)):
-        active_cases.append({"argument": index, "value": data[index]['Deaths'] - data[index-1]['Deaths'] if data[index]['Deaths'] - data[index-1]['Deaths'] > 0 else 0})
-    return JSONResponse(status_code=200, content=active_cases)
+@app.get("/getCases")
+def getActiveCases(cases_type: str):
+    return JSONResponse(status_code=200, content=cases[cases_type])
 
-@app.get("/getTotalCases")
-def getTotalCases():
-    data = requests.get('https://api.covid19api.com/country/Romania').json()
-    active_cases=[]
-    for index in range(1, len(data)):
-        active_cases.append({"argument": index, "value": data[index]['Active'] - data[index-1]['Active'] if data[index]['Active'] - data[index-1]['Active'] > 0 and data[index]['Active'] - data[index-1]['Active'] < 10000 else 0})
-    return JSONResponse(status_code=200, content=active_cases)
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000, debug=True)

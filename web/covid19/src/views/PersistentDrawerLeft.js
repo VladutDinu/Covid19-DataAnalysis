@@ -1,8 +1,8 @@
 import * as React from "react";
 import '@devexpress/dx-react-chart-bootstrap4/dist/dx-react-chart-bootstrap4.css';
-import './App.css';
+import '../App.css';
 import Paper from '@material-ui/core/Paper';
-import './css/main.module.css';
+import '../css/main.module.css';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';

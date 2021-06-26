@@ -1,27 +1,34 @@
 import * as React from "react";
-import { PersistentDrawerLeft } from "./PersistentDrawerLeft";
-
+import { PersistentDrawerLeft } from "./views/PersistentDrawerLeft";
+import { SignUp } from "./views/SignUp";
+import { SignIn } from "./views/SignIn";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 async function getActiveCases() {
   console.log('Active cases')
-  const response = await fetch('http://127.0.0.1:8000/getActiveCases')
+  const response = await fetch('http://127.0.0.1:8000/getCases?cases_type=Active')
   const data = await response.json()
   return data
 }
 async function getRecoveredCases() {
   console.log('Recovered cases')
-  const response = await fetch('http://127.0.0.1:8000/getRecoveredCases')
+  const response = await fetch('http://127.0.0.1:8000/getCases?cases_type=Recovered')
   const data = await response.json()
   return data
 }
 async function getDeathCases() {
   console.log('Death cases')
-  const response = await fetch('http://127.0.0.1:8000/getDeathCases')
+  const response = await fetch('http://127.0.0.1:8000/getCases?cases_type=Deaths')
   const data = await response.json()
   return data
 }
 async function getTotalCases() {
   console.log('Total cases')
-  const response = await fetch('http://127.0.0.1:8000/getTotalCases')
+  const response = await fetch('http://127.0.0.1:8000/getCases?cases_type=Active')
   const data = await response.json()
   return data
 }
@@ -43,21 +50,18 @@ export default class App extends React.PureComponent {
         active:res,
         isLoadedactive:true
       })
-      console.log(1)
     })
     getRecoveredCases().then(res =>{
       this.setState({
         recovered:res,
         isLoadedrecovered:true
       })
-      console.log(2)
     })
     getDeathCases().then(res =>{
       this.setState({
         death:res,
         isLoadeddeath:true
       })
-      console.log(3)
     })
     getTotalCases().then(res =>{
       this.setState({
@@ -71,9 +75,23 @@ export default class App extends React.PureComponent {
     super(props);
   }
   render () {
-    return this.state.isLoadedactive && this.state.isLoadeddeath && this.state.isLoadedrecovered && this.state.isLoadedtotal ?
-      <PersistentDrawerLeft state = {this.state}></PersistentDrawerLeft> :
-      null
+    return (
+      <Router>
+        <Switch>
+            <Route path="/Dashboard">
+              {this.state.isLoadedactive && this.state.isLoadeddeath && this.state.isLoadedrecovered && this.state.isLoadedtotal ?
+              <PersistentDrawerLeft state = {this.state}></PersistentDrawerLeft> :
+              null}
+            </Route>
+            <Route path="/SignUp">
+              <SignUp />
+            </Route>
+            <Route path="/">
+              <SignIn />
+            </Route>
+        </Switch>
+      </Router>
+    )
       
     
   }
