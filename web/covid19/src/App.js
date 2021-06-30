@@ -5,9 +5,13 @@ import { SignIn } from "./views/SignIn";
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
-  Link
+  Route
 } from "react-router-dom";
+const data = [
+  { argument: 1, value: 10 },
+  { argument: 2, value: 20 },
+  { argument: 3, value: 30 },
+];
 async function getActiveCases() {
   console.log('Active cases')
   const response = await fetch('http://127.0.0.1:8000/getCases?cases_type=Active')
@@ -47,34 +51,34 @@ export default class App extends React.PureComponent {
   componentDidMount() { 
     getActiveCases().then(res =>{
       this.setState({
-        active:res,
+        active:res[0],
         isLoadedactive:true
       })
     })
+    
     getRecoveredCases().then(res =>{
       this.setState({
-        recovered:res,
+        recovered:res[0],
         isLoadedrecovered:true
       })
     })
     getDeathCases().then(res =>{
       this.setState({
-        death:res,
+        death:res[0],
         isLoadeddeath:true
       })
     })
     getTotalCases().then(res =>{
       this.setState({
-        total:res,
+        total:res[0],
         isLoadedtotal:true
       })
     })
     this.forceUpdate()
   }
-  constructor(props) {
-    super(props);
-  }
+  
   render () {
+    
     return (
       <Router>
         <Switch>

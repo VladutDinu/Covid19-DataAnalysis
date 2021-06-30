@@ -31,7 +31,11 @@ import {
   BarSeries,
   PieSeries
 } from '@devexpress/dx-react-chart-material-ui';
-
+const data = [
+  { argument: 1, value: 10 },
+  { argument: 2, value: 20 },
+  { argument: 3, value: 30 },
+];
 async function getActiveCases() {
   console.log('Active cases')
   const response = await fetch('http://127.0.0.1:8000/getActiveCases')
@@ -69,7 +73,6 @@ export function PersistentDrawerLeft({state}) {
   const handleDrawerOpen = () => {
     setOpen(true);
   };
-
   const handleDrawerClose = () => {
     setOpen(false);
   };
@@ -167,7 +170,7 @@ export function PersistentDrawerLeft({state}) {
 
             <div style={{ width: "50%", display: "inline-block", margin: "auto" }}>
               <h3>Line Graph</h3>
-              <Chart data={state.active} >
+              <Chart data={activeData} >
                 <ArgumentAxis />
                 <ValueAxis />
 
@@ -177,7 +180,7 @@ export function PersistentDrawerLeft({state}) {
 
             <div style={{ width: "50%", display: "inline-block", margin: "auto" }}>
               <h3>Line Graph</h3>
-              <Chart data={state.recovered} >
+              <Chart data={recoveredData} >
                 <ArgumentAxis />
                 <ValueAxis />
 
@@ -187,7 +190,7 @@ export function PersistentDrawerLeft({state}) {
 
             <div style={{ width: "50%", display: "inline-block", margin: "auto" }}>
               <h3>Bar Graph</h3>
-              <Chart data={state.death}>
+              <Chart data={deathData}>
                 <ArgumentAxis />
                 <ValueAxis />
 
@@ -197,7 +200,7 @@ export function PersistentDrawerLeft({state}) {
 
             <div style={{ width: "50%", display: "inline-block", margin: "auto" }}>
               <h3>Pie Graph</h3>
-              <Chart data={state.total} >
+              <Chart data={totalData} >
                 <ArgumentAxis />
                 <ValueAxis />
 
