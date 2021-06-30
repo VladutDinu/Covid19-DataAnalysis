@@ -17,7 +17,10 @@ from pprint import pprint
 REQUEST_URL = 'https://api.covid19api.com/live/country/Romania/status/{}/date/{}'
 TYPES=['Active', 'Recovered', 'Deaths']
 LAST_DATE = datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
-CLIENT = MongoClient("mongodb+srv://kidduts:kidduts@covid19.zfnra.mongodb.net/Covid19?retryWrites=true&w=majority")
+link =''
+with open('link.txt', 'r') as file:
+    link = file.read()
+CLIENT = MongoClient(link)
 DB = CLIENT.Covid19
 app = FastAPI()
 origins = ["*"]
