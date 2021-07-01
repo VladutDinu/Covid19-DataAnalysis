@@ -1,9 +1,10 @@
 import json
 from logging import debug
 from threading import Thread
+from time import strptime
 from typing import Optional
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 import uvicorn
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
@@ -59,12 +60,13 @@ async def startup_event():
     date = ''
     with open('last_date.txt', 'r') as file:
         date = file.read()
-        print(date)
-    if datetime.now().strftime('%Y-%m-%d')!= date.split('T')[0]: 
-        get(date)
-        print('cox')
+    date = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
+    modified_date = date + timedelta(days=-1)
+    if (datetime.today() - timedelta(days=1)).strftime('%Y-%m-%d')>= modified_date.strftime('%Y-%m-%d').split('T')[0]: 
+        get(modified_date)
         for status in TYPES:
             for case in cases[status]:
+                print(case)
                 result=DB.data.update_one({"_id" : ObjectId("66f41c59563c515949645d85")}, 
                                           { '$push': 
                                                   { 

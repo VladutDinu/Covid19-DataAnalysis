@@ -13,18 +13,32 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
+function validPassowrd(password, confirm_password){
+  if (typeof password !== "undefined" && typeof confirm_password !== "undefined") {
+    if (password != confirm_password) {
+      return false;
+    }
+    return true;
+  }
 }
+
+function validEmail(email){
+  if(typeof email !== "undefined"){
+     let lastAtPos = email.lastIndexOf('@');
+     let lastDotPos = email.lastIndexOf('.');
+ 
+     if (!(lastAtPos < lastDotPos && lastAtPos > 0 && email.indexOf('@@') == -1 && lastDotPos > 2 && (email.length - lastDotPos) > 2)) {
+        return false
+      }
+     else{
+       return false;
+     }
+   }
+   else{
+     return false;
+   }
+   return true
+ } 
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -107,12 +121,6 @@ export function SignUp() {
                 autoComplete="current-password"
               />
             </Grid>
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                label="I want to receive inspiration, marketing promotions and updates via email."
-              />
-            </Grid>
           </Grid>
           <Button
             type="submit"
@@ -125,16 +133,13 @@ export function SignUp() {
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href="/SignIn" variant="body2">
                 Already have an account? Sign in
               </Link>
             </Grid>
           </Grid>
         </form>
       </div>
-      <Box mt={5}>
-        <Copyright />
-      </Box>
     </Container>
   );
 }

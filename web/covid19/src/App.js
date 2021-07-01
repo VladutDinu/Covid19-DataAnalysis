@@ -7,11 +7,6 @@ import {
   Switch,
   Route
 } from "react-router-dom";
-const data = [
-  { argument: 1, value: 10 },
-  { argument: 2, value: 20 },
-  { argument: 3, value: 30 },
-];
 async function getActiveCases() {
   console.log('Active cases')
   const response = await fetch('http://127.0.0.1:8000/getCases?cases_type=Active')

@@ -5,3 +5,8 @@ Covid19 Data Analysis
 - Python back-end
 - Docker  https://www.youtube.com/watch?v=2a5414BsYqw&ab_channel=incompetent_ian
 - Nginx ?
+
+To do
+=====================
+
+- User routes (login, sigup ... )

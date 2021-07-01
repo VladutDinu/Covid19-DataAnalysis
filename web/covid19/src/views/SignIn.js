@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef,useState, Component } from 'react'
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,19 +12,63 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        CovidKid19
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
+let handlers={
+  email: false,
+  emailString:'',
+  password: '',
+  count : 0,
+  render: true,
+  to: '#'
 }
+function useForceUpdate(){
+  const [email, setEmail] = useState(false); 
+  const [count, setCount] = useState(0); 
+  const [render, setRender] = useState(true); 
+  const [password, setPassword] = useState(''); 
+  const [emailString, setEmailString] = useState(''); 
+  //get request on data to signup
+  return () => {
+    setEmail(handlers.email);
+    setCount(handlers.count);
+    setRender(handlers.render);
+    setPassword(handlers.password);
+    setEmailString(handlers.emailString);
+  }; 
+}
+function renderWrong(){
+  if(handlers.count > 0){
+    if(handlers.email){
+      handlers.render = true;
+      handlers.to='/Dashboard';
+    }
+    else{
+      handlers.render =  false;
+    }
+  }
+  else{
+    handlers.render = true;
+  }
+  console.log('render ='+(handlers.render).toString());
+}
+function validEmail(emailRef){
+  if(typeof emailRef.current.value !== "undefined"){
+    let lastAtPos = emailRef.current.value.indexOf('@');
+    let lastDotPos = emailRef.current.value.indexOf('.');
+    if((lastAtPos < lastDotPos && lastAtPos > 0 && (emailRef.current.value.length - lastDotPos) > 2  && !(emailRef.current.value.indexOf('@') == -1) && lastDotPos > 2)){
+       handlers.email=true;
+       handlers.emailString=emailRef.current.value;
+     }
+    else{
+      handlers.email=false;
+    }
+  }
+  else{
+    handlers.email=false;
+  }
+  handlers.count++;
+  console.log(emailRef.current.value, handlers.email);
+  
+} 
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -48,7 +92,9 @@ const useStyles = makeStyles((theme) => ({
 
 export function SignIn() {
   const classes = useStyles();
-
+  const emailRef = useRef('')
+  const passwordRef = useRef('')
+  const forceUpdate = useForceUpdate();
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -65,21 +111,25 @@ export function SignIn() {
             margin="normal"
             required
             fullWidth
+            inputRef={emailRef}
             id="email"
             label="Email Address"
             name="email"
             autoComplete="email"
             autoFocus
           />
+          {( handlers.render ) ? null : <p>Wrong email</p>}
           <TextField
             variant="outlined"
             margin="normal"
             required
             fullWidth
+            inputRef={passwordRef}
             name="password"
             label="Password"
             type="password"
             id="password"
+            onChange={() => {handlers.password = passwordRef.current.value}}
             autoComplete="current-password"
           />
           <FormControlLabel
@@ -92,7 +142,12 @@ export function SignIn() {
             variant="contained"
             color="primary"
             className={classes.submit}
-            href="Dashboard"
+            href={handlers.to}
+            onClick={() =>{
+              validEmail(emailRef)
+              renderWrong()
+              forceUpdate()
+            }}
           >
             Sign In
           </Button>
@@ -110,9 +165,6 @@ export function SignIn() {
           </Grid>
         </form>
       </div>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
     </Container>
   );
 }
