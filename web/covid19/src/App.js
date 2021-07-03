@@ -46,26 +46,25 @@ export default class App extends React.PureComponent {
   componentDidMount() { 
     getActiveCases().then(res =>{
       this.setState({
-        active:res[0],
+        active:res,
         isLoadedactive:true
       })
     })
-    
     getRecoveredCases().then(res =>{
       this.setState({
-        recovered:res[0],
+        recovered:res,
         isLoadedrecovered:true
       })
     })
     getDeathCases().then(res =>{
       this.setState({
-        death:res[0],
+        death:res,
         isLoadeddeath:true
       })
     })
     getTotalCases().then(res =>{
       this.setState({
-        total:res[0],
+        total:res,
         isLoadedtotal:true
       })
     })
