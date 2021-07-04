@@ -16,6 +16,8 @@ from requests.api import request
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from pprint import pprint
+import hashlib
+from models.User import User
 REQUEST_URL = 'https://api.covid19api.com/live/country/Romania/status/{}/date/{}'
 DATA_TO_ADD_URL = 'https://api.covid19api.com/country/Romania'
 TYPES=['Active', 'Recovered', 'Deaths']
@@ -110,5 +112,33 @@ def getActiveCases(cases_type: str):
     return JSONResponse(status_code=200, content=cases_to_add[cases_type])
 #to do user routing
 
+@app.post("/register")
+def register(user: User):   
+    if(len(user.full_name) == 0):
+        return JSONResponse(status_code=400, content={'Error': 'Name lenght is invalid'})
+    if(len(user.email) == 0):
+        return JSONResponse(status_code=400, content={'Error': 'Email lenght is invalid'})
+    if(len(user.password) == 0):
+        return JSONResponse(status_code=400, content={'Error': 'Password lenght is invalid'})
+    DB.users.insert_one({
+        'email': hashlib.md5(user.email.encode('utf-8')).hexdigest(),
+        'password': hashlib.md5(user.password.encode('utf-8')).hexdigest(),
+        'full_name': user.full_name
+    })
+    return JSONResponse(status_code=200, content={'Success': 'The user has been added'})
+
+@app.get("/login")
+def login(email: str, password: str):
+    newUser = DB.users.find({
+        'email' : hashlib.md5(email.encode('utf-8')).hexdigest(),
+        'password' : hashlib.md5(password.encode('utf-8')).hexdigest(),
+        })
+    loggedUser = ''
+    for user in newUser:
+       loggedUser=user
+    if loggedUser != '':
+        return JSONResponse(status_code=200, content={'Success': str(loggedUser)})
+    else:
+        return JSONResponse(status_code=400, content={'Error': str(loggedUser)})
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000, debug=True)

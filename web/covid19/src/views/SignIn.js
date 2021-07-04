@@ -12,13 +12,15 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import {login_user} from '../services/User.services'
 let handlers={
   email: false,
   emailString:'',
   password: '',
   count : 0,
   render: true,
-  to: '#'
+  to: '#',
+  logged: false
 }
 function useForceUpdate(){
   const [email, setEmail] = useState(false); 
@@ -26,7 +28,7 @@ function useForceUpdate(){
   const [render, setRender] = useState(true); 
   const [password, setPassword] = useState(''); 
   const [emailString, setEmailString] = useState(''); 
-  //get request on data to signup
+  //get request on data to signup 
   return () => {
     setEmail(handlers.email);
     setCount(handlers.count);
@@ -35,11 +37,26 @@ function useForceUpdate(){
     setEmailString(handlers.emailString);
   }; 
 }
+function useForceLogin(){
+  const [to, setTo] = useState('#'); 
+  if(handlers.render){
+    login_user(handlers.emailString, handlers.password).then(res => {
+      if(res == 200){
+        handlers.to='/Dashboard';
+        handlers.logged=true;
+      } else{
+        handlers.to='#';
+      } 
+    });
+  }
+  return () => {
+    setTo(handlers.to);
+  }
+}
 function renderWrong(){
   if(handlers.count > 0){
     if(handlers.email){
-      handlers.render = true;
-      handlers.to='/Dashboard';
+      handlers.render = true;      
     }
     else{
       handlers.render =  false;
@@ -67,9 +84,19 @@ function validEmail(emailRef){
   }
   handlers.count++;
   console.log(emailRef.current.value, handlers.email);
-  
 } 
-
+function validPassowrd(passwordRef){
+  if (typeof passwordRef.current.value !== "undefined") {
+    if (passwordRef.current.value.length > 8) {
+      handlers.password=passwordRef.current.value;
+      return true;
+    }
+    else{
+      handlers.password=passwordRef.current.value;
+      return false;
+    }
+  }
+}
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -95,6 +122,7 @@ export function SignIn() {
   const emailRef = useRef('')
   const passwordRef = useRef('')
   const forceUpdate = useForceUpdate();
+  const forceLogin = useForceLogin();
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -145,8 +173,10 @@ export function SignIn() {
             href={handlers.to}
             onClick={() =>{
               validEmail(emailRef)
-              renderWrong()
-              forceUpdate()
+              validPassowrd(passwordRef)
+              renderWrong()     
+              forceUpdate()  
+              forceLogin()     
             }}
           >
             Sign In

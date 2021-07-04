@@ -34,25 +34,25 @@ import {
 
 async function getActiveCases() {
   console.log('Active cases')
-  const response = await fetch('http://127.0.0.1:8000/getActiveCases')
+  const response = await fetch('http://127.0.0.1:8000/getCases?cases_type=Active')
   const data = await response.json()
   return data
 }
 async function getRecoveredCases() {
   console.log('Recovered cases')
-  const response = await fetch('http://127.0.0.1:8000/getRecoveredCases')
+  const response = await fetch('http://127.0.0.1:8000/getCases?cases_type=Recovered')
   const data = await response.json()
   return data
 }
 async function getDeathCases() {
   console.log('Death cases')
-  const response = await fetch('http://127.0.0.1:8000/getDeathCases')
+  const response = await fetch('http://127.0.0.1:8000/getCases?cases_type=Deaths')
   const data = await response.json()
   return data
 }
 async function getTotalCases() {
   console.log('Total cases')
-  const response = await fetch('http://127.0.0.1:8000/getTotalCases')
+  const response = await fetch('http://127.0.0.1:8000/getCases?cases_type=Active')
   const data = await response.json()
   return data
 }
